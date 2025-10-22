@@ -19,6 +19,7 @@ let quizAnswers = [];
 let currentQuizQuestion = 0;
 let quizScore = 0;
 let showRestartConfirm = false;
+let quizQuestions = []; // Will be populated with random selection
 
 // MEDDPICC Info
 const meddpiccInfo = {
@@ -129,18 +130,20 @@ const stakeholders = {
   },
 };
 
-// Quiz Questions
-const quizQuestions = [
+// Quiz Questions - Expanded question bank (will randomly select 10)
+const quizQuestionBank = [
+  // METRICS Questions
   {
     question: "What is the definition of METRICS in MEDDPICC?",
     type: "definition",
+    element: "metrics",
     options: [
       "The person who controls the budget",
-      "Quantifiable business outcomes the customer wants to achieve",
       "The steps to make a buying decision",
       "The legal and procurement process",
+      "Quantifiable business outcomes the customer wants to achieve",
     ],
-    correct: 1,
+    correct: 3,
     explanation:
       "Metrics are quantifiable business outcomes that help build a compelling business case and demonstrate ROI.",
   },
@@ -148,77 +151,91 @@ const quizQuestions = [
     question:
       "In this deal, what is the potential annual savings if they achieve a 30% efficiency gain?",
     type: "deal-specific",
+    element: "metrics",
     options: ["$150K", "$200K", "$300K", "$500K"],
     correct: 2,
     explanation:
       "Mike Rodriguez mentioned they could achieve roughly $300K in annual savings with a 30% cut in project completion time.",
   },
   {
+    question:
+      "What is TechFlow's quarterly loss due to current inefficiencies?",
+    type: "deal-specific",
+    element: "metrics",
+    options: ["$50K", "$75K", "$100K", "$125K"],
+    correct: 1,
+    explanation:
+      "Mike Rodriguez stated they lose about $75K per quarter in lost productivity and missed deadlines.",
+  },
+  {
+    question: "Why are Metrics important in MEDDPICC?",
+    type: "definition",
+    element: "metrics",
+    options: [
+      "They prove ROI and justify the investment with concrete numbers",
+      "They help you negotiate better pricing",
+      "They identify who makes the final decision",
+      "They reveal competitive alternatives",
+    ],
+    correct: 0,
+    explanation:
+      "Metrics help you build a compelling business case and demonstrate ROI. Without concrete numbers, you can't prove value or justify the investment.",
+  },
+
+  // ECONOMIC BUYER Questions
+  {
     question: "What is the ECONOMIC BUYER?",
     type: "definition",
+    element: "economicBuyer",
     options: [
-      "The person who will use the product daily",
       "The person with budget authority who signs the contract",
+      "The person who will use the product daily",
       "The person who evaluates technical requirements",
       "The person who champions the solution internally",
     ],
-    correct: 1,
+    correct: 0,
     explanation:
       "The Economic Buyer is the person with budget authority who has the power to sign the contract and approve the purchase.",
   },
   {
     question: "Who is the Economic Buyer in this deal?",
     type: "deal-specific",
+    element: "economicBuyer",
     options: ["Sarah Chen", "Mike Rodriguez", "Jennifer Park", "Tom Anderson"],
     correct: 2,
     explanation:
       "Jennifer Park (CFO) is the Economic Buyer. She controls the budget and anything over $50K needs her signature.",
   },
   {
-    question: "What does PAIN represent in MEDDPICC?",
-    type: "definition",
-    options: [
-      "The competitor's weaknesses",
-      "The critical business problems causing urgency for change",
-      "The price point that's too high",
-      "The paperwork required to close",
-    ],
-    correct: 1,
-    explanation:
-      "Pain represents the critical business problems causing urgency for change. Without clear, urgent pain, deals tend to stall.",
-  },
-  {
-    question: "What is the total timeline for TechFlow's buying process?",
+    question:
+      "What is the signature threshold that requires Jennifer Park's approval?",
     type: "deal-specific",
-    options: ["4-6 weeks", "6-8 weeks", "8-10 weeks", "10-12 weeks"],
-    correct: 2,
+    element: "economicBuyer",
+    options: ["Over $25K", "Over $75K", "Over $100K", "Over $50K"],
+    correct: 3,
     explanation:
-      "Tom Anderson mentioned the total timeline is usually 8-10 weeks: technical eval (2 weeks) + pilot (4 weeks) + budget approval + procurement.",
+      "Jennifer Park mentioned that anything over $50K needs her signature for final approval.",
   },
   {
-    question: "What is a CHAMPION in MEDDPICC?",
+    question: "Why is identifying the Economic Buyer critical?",
     type: "definition",
+    element: "economicBuyer",
     options: [
-      "The highest-ranking executive in the company",
-      "An internal advocate who sells on your behalf when you're not in the room",
-      "The person who has the final budget approval",
-      "The competitive vendor you need to beat",
+      "They have the most technical knowledge",
+      "They know all the competitors in the market",
+      "They set the project timeline",
+      "They control the money and can sign the contract",
     ],
-    correct: 1,
+    correct: 3,
     explanation:
-      "A Champion is an internal advocate who sells on your behalf, navigates internal politics, and keeps deals moving forward.",
+      "You must identify and engage the person who controls the money. Selling to anyone else wastes time and risks losing deals at the final stage.",
   },
-  {
-    question: "Which competitor is currently the frontrunner in this deal?",
-    type: "deal-specific",
-    options: ["Asana", "ClickUp", "Monday.com", "Jira"],
-    correct: 2,
-    explanation:
-      "According to Tom Anderson, Monday.com is the current frontrunner, though it's expensive.",
-  },
+
+  // DECISION CRITERIA Questions
   {
     question: "What does DECISION CRITERIA mean?",
     type: "definition",
+    element: "decisionCriteria",
     options: [
       "The timeline for making a decision",
       "The specific requirements used to evaluate and compare solutions",
@@ -231,8 +248,324 @@ const quizQuestions = [
   },
   {
     question:
+      "Which of these is NOT mentioned as a decision criterion for TechFlow?",
+    type: "deal-specific",
+    element: "decisionCriteria",
+    options: [
+      "Integration with existing tools",
+      "Mobile accessibility",
+      "Scalability to 200+ users",
+      "Video conferencing capabilities",
+    ],
+    correct: 3,
+    explanation:
+      "The key criteria mentioned were: integration capabilities, mobile access, reporting, scalability to 200+ users, and SSO & SOC2 compliance. Video conferencing was not mentioned.",
+  },
+  {
+    question:
+      "What security requirements are part of TechFlow's decision criteria?",
+    type: "deal-specific",
+    element: "decisionCriteria",
+    options: [
+      "Two-factor authentication only",
+      "SSO and SOC2 compliance",
+      "VPN access required",
+      "On-premise hosting only",
+    ],
+    correct: 1,
+    explanation:
+      "Tom Anderson specified that SSO and SOC2 compliance are non-negotiable requirements for security team approval.",
+  },
+  {
+    question: "Why is understanding Decision Criteria important?",
+    type: "definition",
+    element: "decisionCriteria",
+    options: [
+      "It tells you the exact price point to quote",
+      "It identifies the person with budget authority",
+      "It lets you position your strengths and differentiate from competitors",
+      "It reveals internal politics",
+    ],
+    correct: 2,
+    explanation:
+      "Understanding their criteria lets you position your strengths and differentiate from competitors. You can influence criteria early in the sales cycle.",
+  },
+
+  // DECISION PROCESS Questions
+  {
+    question: "What is the DECISION PROCESS in MEDDPICC?",
+    type: "definition",
+    element: "decisionProcess",
+    options: [
+      "The legal approval workflow",
+      "The steps and timeline the organization follows to make a buying decision",
+      "The competitor evaluation method",
+      "The budget allocation process",
+    ],
+    correct: 1,
+    explanation:
+      "Decision Process is the steps and timeline the organization follows to make a buying decision.",
+  },
+  {
+    question: "What is the total timeline for TechFlow's buying process?",
+    type: "deal-specific",
+    element: "decisionProcess",
+    options: ["4-6 weeks", "6-8 weeks", "8-10 weeks", "10-12 weeks"],
+    correct: 2,
+    explanation:
+      "Tom Anderson mentioned the total timeline is usually 8-10 weeks: technical eval (2 weeks) + pilot (4 weeks) + budget approval + procurement.",
+  },
+  {
+    question: "How long is TechFlow's pilot phase?",
+    type: "deal-specific",
+    element: "decisionProcess",
+    options: ["2 weeks", "3 weeks", "4 weeks", "6 weeks"],
+    correct: 2,
+    explanation:
+      "According to Tom Anderson, the pilot with Sarah's team takes 4 weeks.",
+  },
+  {
+    question: "Why is knowing the Decision Process valuable?",
+    type: "definition",
+    element: "decisionProcess",
+    options: [
+      "It helps you forecast accurately and identify potential roadblocks",
+      "It tells you which features to emphasize",
+      "It reveals the customer's budget",
+      "It shows you who the champion is",
+    ],
+    correct: 0,
+    explanation:
+      "Knowing the process helps you forecast accurately, identify potential roadblocks, and align your sales activities to their buying journey.",
+  },
+
+  // PAPER PROCESS Questions
+  {
+    question: "What does PAPER PROCESS refer to in MEDDPICC?",
+    type: "definition",
+    element: "paperProcess",
+    options: [
+      "The legal, procurement, and contracting steps required to finalize the deal",
+      "The document creation workflow",
+      "The proposal writing process",
+      "The paperwork for expense reimbursement",
+    ],
+    correct: 0,
+    explanation:
+      "Paper Process refers to the legal, procurement, and contracting steps required to finalize the deal.",
+  },
+  {
+    question: "How long does TechFlow's legal review typically take?",
+    type: "deal-specific",
+    element: "paperProcess",
+    options: ["1 week", "2 weeks", "3 weeks", "4 weeks"],
+    correct: 2,
+    explanation: "Jennifer Park mentioned that the legal review takes 3 weeks.",
+  },
+  {
+    question: "When does TechFlow require board approval?",
+    type: "deal-specific",
+    element: "paperProcess",
+    options: [
+      "For all purchases",
+      "If over $50K",
+      "If over $100K",
+      "Board approval is never required",
+    ],
+    correct: 2,
+    explanation:
+      "Jennifer Park stated that board approval is required if the purchase is over $100K.",
+  },
+  {
+    question: "Why is understanding Paper Process critical?",
+    type: "definition",
+    element: "paperProcess",
+    options: [
+      "It determines your commission structure",
+      "It identifies the champion",
+      "It reveals the competition",
+      "It prevents surprise delays at closing",
+    ],
+    correct: 3,
+    explanation:
+      "Paper process delays kill deals. Understanding security reviews, legal approvals, and procurement timelines prevents surprise delays at closing.",
+  },
+
+  // PAIN Questions
+  {
+    question: "What does PAIN represent in MEDDPICC?",
+    type: "definition",
+    element: "pain",
+    options: [
+      "The competitor's weaknesses",
+      "The critical business problems causing urgency for change",
+      "The price point that's too high",
+      "The paperwork required to close",
+    ],
+    correct: 1,
+    explanation:
+      "Pain represents the critical business problems causing urgency for change. Without clear, urgent pain, deals tend to stall.",
+  },
+  {
+    question:
+      "How often does TechFlow's current system crash during critical deadlines?",
+    type: "deal-specific",
+    element: "pain",
+    options: [
+      "Once a week",
+      "Twice a week",
+      "Three times a week",
+      "Once a month",
+    ],
+    correct: 1,
+    explanation:
+      "Sarah Chen mentioned their current tool crashes at least twice a week during critical deadlines.",
+  },
+  {
+    question: "How many hours does Sarah's team waste weekly on workarounds?",
+    type: "deal-specific",
+    element: "pain",
+    options: ["3+ hours", "5+ hours", "7+ hours", "10+ hours"],
+    correct: 1,
+    explanation:
+      "Sarah Chen stated her team wastes 5+ hours weekly just on workarounds.",
+  },
+  {
+    question: "Why is Pain important in MEDDPICC?",
+    type: "definition",
+    element: "pain",
+    options: [
+      "It helps you discount your product",
+      "It creates urgency - without clear pain, deals stall",
+      "It identifies the economic buyer",
+      "It reveals the decision criteria",
+    ],
+    correct: 1,
+    explanation:
+      "Pain creates urgency. Without clear, urgent pain, deals stall. The stronger the pain, the faster they'll move to solve it.",
+  },
+
+  // CHAMPION Questions
+  {
+    question: "What is a CHAMPION in MEDDPICC?",
+    type: "definition",
+    element: "champion",
+    options: [
+      "The highest-ranking executive in the company",
+      "An internal advocate who sells on your behalf when you're not in the room",
+      "The person who has the final budget approval",
+      "The competitive vendor you need to beat",
+    ],
+    correct: 1,
+    explanation:
+      "A Champion is an internal advocate who sells on your behalf, navigates internal politics, and keeps deals moving forward.",
+  },
+  {
+    question: "Who is the Champion in the TechFlow deal?",
+    type: "deal-specific",
+    element: "champion",
+    options: ["Mike Rodriguez", "Sarah Chen", "Jennifer Park", "Tom Anderson"],
+    correct: 1,
+    explanation:
+      "Sarah Chen stated she's been pushing leadership for months and will champion the solution internally.",
+  },
+  {
+    question: "How long has Sarah been pushing leadership for an upgrade?",
+    type: "deal-specific",
+    element: "champion",
+    options: ["Weeks", "Months", "A year", "Two years"],
+    correct: 1,
+    explanation:
+      "Sarah Chen mentioned she's been pushing leadership for months to upgrade their system.",
+  },
+  {
+    question: "Why is having a Champion critical to winning deals?",
+    type: "definition",
+    element: "champion",
+    options: [
+      "They control the budget",
+      "They navigate internal politics and influence stakeholders when you're not there",
+      "They make the final purchasing decision",
+      "They evaluate technical requirements",
+    ],
+    correct: 1,
+    explanation:
+      "Champions navigate internal politics, influence stakeholders, and keep deals moving. Without a champion, you're fighting blind against internal resistance.",
+  },
+
+  // COMPETITION Questions
+  {
+    question: "What does COMPETITION mean in MEDDPICC?",
+    type: "definition",
+    element: "competition",
+    options: [
+      "Only direct product competitors",
+      "Alternative solutions being considered, including status quo",
+      "Companies in the same industry",
+      "Previous vendors they've worked with",
+    ],
+    correct: 1,
+    explanation:
+      "Competition includes alternative solutions the customer is considering, including doing nothing (status quo).",
+  },
+  {
+    question: "Which competitor is currently the frontrunner in this deal?",
+    type: "deal-specific",
+    element: "competition",
+    options: ["Asana", "ClickUp", "Monday.com", "Jira"],
+    correct: 2,
+    explanation:
+      "According to Tom Anderson, Monday.com is the current frontrunner, though it's expensive.",
+  },
+  {
+    question: "Why did TechFlow find Asana unsuitable?",
+    type: "deal-specific",
+    element: "competition",
+    options: [
+      "Too expensive",
+      "Too simple for their complex workflows",
+      "Poor customer support",
+      "No mobile access",
+    ],
+    correct: 1,
+    explanation:
+      "Sarah Chen mentioned that Asana was too simple for their complex workflows.",
+  },
+  {
+    question: "What is Sarah's concern about ClickUp?",
+    type: "deal-specific",
+    element: "competition",
+    options: [
+      "Too expensive",
+      "Missing key features",
+      "Learning curve complexity",
+      "Poor security",
+    ],
+    correct: 2,
+    explanation:
+      "Tom Anderson mentioned that Sarah's worried about ClickUp's learning curve.",
+  },
+  {
+    question: "Why is understanding Competition important?",
+    type: "definition",
+    element: "competition",
+    options: [
+      "So you can copy their features",
+      "To know who to compete against and differentiate strategically",
+      "To determine your pricing",
+      "To identify the economic buyer",
+    ],
+    correct: 1,
+    explanation:
+      "You can't win without knowing who you're competing against and why. Understanding competition helps you differentiate and position strategically.",
+  },
+
+  // Additional cross-element questions
+  {
+    question:
       "What ROI threshold would get this deal fast-tracked according to Jennifer?",
     type: "deal-specific",
+    element: "competition",
     options: [
       "$100K+ in annual value",
       "$150K+ in annual value",
@@ -242,6 +575,20 @@ const quizQuestions = [
     correct: 2,
     explanation:
       "Jennifer Park stated that if they can prove $250K+ in annual value through efficiency gains and cost savings, the deal gets fast-tracked.",
+  },
+  {
+    question: "What must the solution integrate with at TechFlow?",
+    type: "deal-specific",
+    element: "competition",
+    options: [
+      "Slack, Google Workspace, and custom CRM",
+      "Microsoft Teams, Office 365, and Salesforce",
+      "Zoom, Dropbox, and HubSpot",
+      "Jira, Confluence, and GitHub",
+    ],
+    correct: 0,
+    explanation:
+      "Tom Anderson specified the solution must integrate with Slack, Google Workspace, and their custom CRM.",
   },
 ];
 
@@ -1365,6 +1712,30 @@ function handleResponse(responseIndex) {
 }
 
 function startQuiz() {
+  // Filter questions based on discovered elements
+  // Include all definition questions
+  const definitionQuestions = quizQuestionBank.filter(
+    (q) => q.type === "definition"
+  );
+
+  // Only include deal-specific questions for elements that were discovered
+  const dealSpecificQuestions = quizQuestionBank.filter((q) => {
+    if (q.type !== "deal-specific") return false;
+    // If question has an element tag, check if it was discovered
+    if (q.element) {
+      return discoveredElements[q.element] === true;
+    }
+    // If no element tag (shouldn't happen), include it
+    return true;
+  });
+
+  // Combine and shuffle
+  const availableQuestions = [...definitionQuestions, ...dealSpecificQuestions];
+  const shuffled = availableQuestions.sort(() => Math.random() - 0.5);
+
+  // Select 10 questions (or fewer if not enough available)
+  quizQuestions = shuffled.slice(0, Math.min(10, shuffled.length));
+
   gameState = "quiz";
   currentQuizQuestion = 0;
   quizAnswers = [];
@@ -1450,6 +1821,7 @@ function playAgain() {
   modalContent = null;
   discoveryNotes = [];
   quizAnswers = [];
+  quizQuestions = [];
   currentQuizQuestion = 0;
   quizScore = 0;
   showRestartConfirm = false;
