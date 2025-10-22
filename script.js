@@ -351,6 +351,7 @@ const dialogues = {
 
 // Render Functions
 function render() {
+  window.scrollTo(0, 0);
   const app = document.getElementById("app");
 
   if (gameState === "intro") {
@@ -1232,4 +1233,11 @@ function confirmRestartYes() {
 }
 
 // Initialize
+if (history.scrollRestoration) {
+  history.scrollRestoration = "manual";
+}
+window.scrollTo(0, 0);
+document.documentElement.scrollTop = 0;
+document.body.scrollTop = 0;
+
 render();
