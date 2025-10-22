@@ -248,8 +248,6 @@ const quizQuestions = [
 // Dialogues
 const dialogues = {
   sarah: {
-    question:
-      "So Sarah, what's the biggest challenge with your current project management setup?",
     responses: [
       {
         text: "Tell me about your day-to-day frustrations",
@@ -275,7 +273,6 @@ const dialogues = {
     ],
   },
   mike: {
-    question: "Mike, what metrics matter most to you for this project?",
     responses: [
       {
         text: "What's the business impact of the current inefficiencies?",
@@ -301,8 +298,6 @@ const dialogues = {
     ],
   },
   jennifer: {
-    question:
-      "Jennifer, I understand you're the decision maker on software investments?",
     responses: [
       {
         text: "Who has final approval on this purchase?",
@@ -328,7 +323,6 @@ const dialogues = {
     ],
   },
   tom: {
-    question: "Tom, what's your technical evaluation process?",
     responses: [
       {
         text: "What other vendors are you considering?",
@@ -389,13 +383,37 @@ function render() {
 function renderIntro() {
   return `
     <div class="gradient-bg center-container">
-      <div class="card">
+      <div class="card" style="max-width: 800px;">
         <div class="emoji-large">🕵️‍♂️</div>
         <h1>MEDDPICC Detective</h1>
         <p class="subtitle">
           Your mission: Qualify this deal by uncovering all <strong>8 MEDDPICC elements</strong> 
           through strategic conversations with key stakeholders.
         </p>
+
+        <!-- Learning Objective Section -->
+        <div style="background: #eff6ff; padding: 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; border: 1px solid #3b82f6;">
+          <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>🎯</span> Learning Objective
+          </h3>
+          <p style="color: #1e3a8a; margin: 0; font-size: 17px; line-height: 1.7; font-weight: 500;">
+            Master the MEDDPICC Framework by learning to identify and define all 8 critical elements of deal qualification through strategic discovery conversations
+          </p>
+        </div>
+
+        <!-- How to Play Section -->
+        <div style="background: #f0fdf4; padding: 24px; border-radius: 12px; margin-bottom: 24px; text-align: left; border: 1px solid #10b981;">
+          <h3 style="color: #065f46; margin: 0 0 16px 0; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+            <span>📋</span> How to Play
+          </h3>
+          <div style="color: #047857; font-size: 15px; line-height: 1.8;">
+            <p style="margin: 0 0 12px 0;"><strong>1. Choose Your Stakeholder:</strong> Select from 4 key contacts at TechFlow Solutions, each with unique insights</p>
+            <p style="margin: 0 0 12px 0;"><strong>2. Ask Strategic Questions:</strong> Pick the right question to uncover specific MEDDPICC elements</p>
+            <p style="margin: 0 0 12px 0;"><strong>3. Take Notes:</strong> Your discoveries are automatically documented for reference</p>
+            <p style="margin: 0 0 12px 0;"><strong>4. Complete Discovery:</strong> Uncover all 8 MEDDPICC elements by talking to different stakeholders</p>
+            <p style="margin: 0;"><strong>5. Test Your Knowledge:</strong> Take a 10-question quiz covering MEDDPICC definitions and deal-specific details</p>
+          </div>
+        </div>
         
         <div class="info-box">
           <h3>The Case:</h3>
@@ -575,11 +593,6 @@ function renderConversation() {
                   ${stakeholder.bio}
                 </div>
               </div>
-            </div>
-
-            <div class="question-box">
-              <div class="question-label">You ask:</div>
-              <div class="question-text">"${dialogue.question}"</div>
             </div>
 
             <div class="response-section">
