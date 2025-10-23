@@ -139,11 +139,11 @@ const quizQuestionBank = [
     element: "metrics",
     options: [
       "The person who controls the budget",
+      "Quantifiable business outcomes the customer wants to achieve",
       "The steps to make a buying decision",
       "The legal and procurement process",
-      "Quantifiable business outcomes the customer wants to achieve",
     ],
-    correct: 3,
+    correct: 1,
     explanation:
       "Metrics are quantifiable business outcomes that help build a compelling business case and demonstrate ROI.",
   },
@@ -172,12 +172,12 @@ const quizQuestionBank = [
     type: "definition",
     element: "metrics",
     options: [
-      "They prove ROI and justify the investment with concrete numbers",
       "They help you negotiate better pricing",
+      "They prove ROI and justify the investment with concrete numbers",
       "They identify who makes the final decision",
       "They reveal competitive alternatives",
     ],
-    correct: 0,
+    correct: 1,
     explanation:
       "Metrics help you build a compelling business case and demonstrate ROI. Without concrete numbers, you can't prove value or justify the investment.",
   },
@@ -188,12 +188,12 @@ const quizQuestionBank = [
     type: "definition",
     element: "economicBuyer",
     options: [
-      "The person with budget authority who signs the contract",
       "The person who will use the product daily",
+      "The person with budget authority who signs the contract",
       "The person who evaluates technical requirements",
       "The person who champions the solution internally",
     ],
-    correct: 0,
+    correct: 1,
     explanation:
       "The Economic Buyer is the person with budget authority who has the power to sign the contract and approve the purchase.",
   },
@@ -211,8 +211,8 @@ const quizQuestionBank = [
       "What is the signature threshold that requires Jennifer Park's approval?",
     type: "deal-specific",
     element: "economicBuyer",
-    options: ["Over $25K", "Over $75K", "Over $100K", "Over $50K"],
-    correct: 3,
+    options: ["Over $25K", "Over $50K", "Over $75K", "Over $100K"],
+    correct: 1,
     explanation:
       "Jennifer Park mentioned that anything over $50K needs her signature for final approval.",
   },
@@ -222,11 +222,11 @@ const quizQuestionBank = [
     element: "economicBuyer",
     options: [
       "They have the most technical knowledge",
+      "They control the money and can sign the contract",
       "They know all the competitors in the market",
       "They set the project timeline",
-      "They control the money and can sign the contract",
     ],
-    correct: 3,
+    correct: 1,
     explanation:
       "You must identify and engage the person who controls the money. Selling to anyone else wastes time and risks losing deals at the final stage.",
   },
@@ -254,10 +254,10 @@ const quizQuestionBank = [
     options: [
       "Integration with existing tools",
       "Mobile accessibility",
-      "Scalability to 200+ users",
       "Video conferencing capabilities",
+      "Scalability to 200+ users",
     ],
-    correct: 3,
+    correct: 2,
     explanation:
       "The key criteria mentioned were: integration capabilities, mobile access, reporting, scalability to 200+ users, and SSO & SOC2 compliance. Video conferencing was not mentioned.",
   },
@@ -282,11 +282,11 @@ const quizQuestionBank = [
     element: "decisionCriteria",
     options: [
       "It tells you the exact price point to quote",
-      "It identifies the person with budget authority",
       "It lets you position your strengths and differentiate from competitors",
+      "It identifies the person with budget authority",
       "It reveals internal politics",
     ],
-    correct: 2,
+    correct: 1,
     explanation:
       "Understanding their criteria lets you position your strengths and differentiate from competitors. You can influence criteria early in the sales cycle.",
   },
@@ -345,12 +345,12 @@ const quizQuestionBank = [
     type: "definition",
     element: "paperProcess",
     options: [
-      "The legal, procurement, and contracting steps required to finalize the deal",
       "The document creation workflow",
+      "The legal, procurement, and contracting steps required to finalize the deal",
       "The proposal writing process",
       "The paperwork for expense reimbursement",
     ],
-    correct: 0,
+    correct: 1,
     explanation:
       "Paper Process refers to the legal, procurement, and contracting steps required to finalize the deal.",
   },
@@ -382,11 +382,11 @@ const quizQuestionBank = [
     element: "paperProcess",
     options: [
       "It determines your commission structure",
+      "It prevents surprise delays at closing",
       "It identifies the champion",
       "It reveals the competition",
-      "It prevents surprise delays at closing",
     ],
-    correct: 3,
+    correct: 1,
     explanation:
       "Paper process delays kill deals. Understanding security reviews, legal approvals, and procurement timelines prevents surprise delays at closing.",
   },
@@ -1729,12 +1729,43 @@ function startQuiz() {
     return true;
   });
 
-  // Combine and shuffle
-  const availableQuestions = [...definitionQuestions, ...dealSpecificQuestions];
-  const shuffled = availableQuestions.sort(() => Math.random() - 0.5);
+  // Shuffle both arrays
+  const shuffledDefinition = [...definitionQuestions].sort(
+    () => Math.random() - 0.5
+  );
+  const shuffledDealSpecific = [...dealSpecificQuestions].sort(
+    () => Math.random() - 0.5
+  );
 
-  // Select 10 questions (or fewer if not enough available)
-  quizQuestions = shuffled.slice(0, Math.min(10, shuffled.length));
+  // Alternate between definition and deal-specific questions
+  quizQuestions = [];
+  const maxQuestions = 10;
+  let defIndex = 0;
+  let dealIndex = 0;
+
+  for (let i = 0; i < maxQuestions; i++) {
+    if (i % 2 === 0) {
+      // Even index - add definition question
+      if (defIndex < shuffledDefinition.length) {
+        quizQuestions.push(shuffledDefinition[defIndex]);
+        defIndex++;
+      } else if (dealIndex < shuffledDealSpecific.length) {
+        // If we run out of definition questions, use deal-specific
+        quizQuestions.push(shuffledDealSpecific[dealIndex]);
+        dealIndex++;
+      }
+    } else {
+      // Odd index - add deal-specific question
+      if (dealIndex < shuffledDealSpecific.length) {
+        quizQuestions.push(shuffledDealSpecific[dealIndex]);
+        dealIndex++;
+      } else if (defIndex < shuffledDefinition.length) {
+        // If we run out of deal-specific questions, use definition
+        quizQuestions.push(shuffledDefinition[defIndex]);
+        defIndex++;
+      }
+    }
+  }
 
   gameState = "quiz";
   currentQuizQuestion = 0;
